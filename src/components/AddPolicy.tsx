@@ -1,50 +1,54 @@
 import React, { useEffect, useState } from "react";
 import Container from '@mui/material/Container';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
-import directives from "../utils/directives";
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
+import Badge from '@mui/material/Badge';
+
 
 type DirectivesProps = {
-    directives: Object
+    directives: Object,
+    addSourcesToDirective: Function
 };
 
 type DirectiveFieldProps = {
     dir: string,
-    src: string[]
+    src: string[],
+    addSourcesToDirective: Function
 };
 
-const DirectiveField: React.FC<DirectiveFieldProps> = ({ dir, src }) => {
-    const [directive, setDirective] = React.useState<string>("");
-    const [sources, setSources] = React.useState<string[]>([]);
+const DirectiveField: React.FC<DirectiveFieldProps> = ({ dir, src, addSourcesToDirective }) => {
+    const [directive, setDirective] = useState<string>("");
+    const [sources, setSources] = useState<string>("");
 
     useEffect(() => {
         setDirective(dir);
-        setSources(src);
+        setSources(src.join(", "));
     }, [dir, src]);
 
-    const handleChange = (event: SelectChangeEvent) => {
-        setDirective(event.target.value);
+    const handleOnEnter = (event) => {
+        if (event.keyCode === 13 || event.key === "Enter") {
+            addSourcesToDirective(dir, sources)
+        }
+    };
+
+    const handleOnChange = (event) => {
+        setSources(event.target.value);
     };
 
     return (
         <Grid container spacing={4}>
             <Grid item xs={4}>
-                <FormControl sx={{ minWidth: 150, maxWidth: 150 }} size="small">
-                    <Select
+                <Badge badgeContent={sources.split(",").length} color="primary">
+                    <TextField
+                        size="small"
+                        id="directive-textarea"
+                        label="Directive"
+                        InputProps={{
+                            readOnly: true,
+                        }}
                         value={directive}
-                        onChange={handleChange}
-                    >
-                        {
-                            directives.map((directive) => {
-                                return <MenuItem key={directive} value={directive}>{directive}</MenuItem>
-                            })
-                        }
-                    </Select>
-                </FormControl>
+                    />
+                </Badge>
             </Grid>
             <Grid item xs={8}>
                 <TextField
@@ -52,7 +56,9 @@ const DirectiveField: React.FC<DirectiveFieldProps> = ({ dir, src }) => {
                     fullWidth
                     id="sources-textarea"
                     label="Sources"
-                    value={sources.join(", ")}
+                    value={sources}
+                    onKeyDown={handleOnEnter}
+                    onChange={handleOnChange}
                 />
             </Grid>
         </Grid>
@@ -60,7 +66,7 @@ const DirectiveField: React.FC<DirectiveFieldProps> = ({ dir, src }) => {
 };
 
 
-export const Directives: React.FC<DirectivesProps> = ({ directives }) => {
+export const Directives: React.FC<DirectivesProps> = ({ directives, addSourcesToDirective }) => {
 
     const [isOpen, setOpen] = useState(false);
 
@@ -81,7 +87,7 @@ export const Directives: React.FC<DirectivesProps> = ({ directives }) => {
                         .map((directive) => {
                             if (directives[directive].length > 0) {
                                 return <Grid key={directive} item xs={12}>
-                                    <DirectiveField dir={directive} src={directives[directive]} />
+                                    <DirectiveField dir={directive} src={directives[directive]} addSourcesToDirective={addSourcesToDirective}/>
                                 </Grid>
 
                             }

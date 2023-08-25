@@ -14,7 +14,7 @@ export const ImportPolicy: React.FC<Props> = ({ callback }) => {
     const [text, setText] = useState("");
 
     const handleOnAdd = () => {
-        callback()
+        callback(undefined, "add-policy")
     };
 
     useEffect(() => {
