@@ -4,12 +4,16 @@ import { ImportPolicy } from "./ImportPolicy";
 import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
 import Chip from '@mui/material/Chip';
-import { Typography } from "@mui/material";
+import { Container, Typography } from "@mui/material";
 import { policyParser } from "../utils/csp-parser";
 import directivesArray from "../utils/directives";
 import { AddEditDialog } from "./AddEditDialog";
 
-export const CSPTool: React.FC = () => {
+type CSPToolProps = {
+    directives: Object
+}
+
+export const CSPTool: React.FC<CSPToolProps> = ({ directives: directivesFromURL }) => {
 
     const [directives, setDirectives] = useState<Object>({})
     const [directiveList, setDirectiveList] = useState<string[]>([]);
@@ -22,10 +26,14 @@ export const CSPTool: React.FC = () => {
     useEffect(() => {
         setDirectiveList(directivesArray);
         const dirs = {};
-        directivesArray.forEach((directive) => {
-            dirs[directive] = [];
-        });
-        setDirectives(dirs);
+        if (Object.keys(directivesFromURL).length > 0) {
+            setDirectives(directivesFromURL);
+        } else {
+            directivesArray.forEach((directive) => {
+                dirs[directive] = [];
+            });
+            setDirectives(dirs);
+        }
     }, [])
 
     useEffect(() => {
@@ -119,30 +127,32 @@ export const CSPTool: React.FC = () => {
 
     return (<React.Fragment>
         <Typography component={'span'} variant={'body2'}>
-            <Grid container spacing={4} sx={{ padding: "100px" }}>
-                <Grid item xs={12}>
-                    <ImportPolicy handleAddDirective={handleAddDirective} directives={directives} policyCount={policyCount} />
+            <Container fixed>
+                <Grid container spacing={4} sx={{ padding: "100px" }}>
+                    <Grid item xs={12}>
+                        <ImportPolicy handleAddDirective={handleAddDirective} directives={directives} policyCount={policyCount} />
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Divider>
+                            <Chip label="Policies" />
+                        </Divider>
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Directives
+                            directives={directives}
+                            handleEditDirective={handleEditDirective} />
+                    </Grid>
                 </Grid>
-                <Grid item xs={12}>
-                    <Divider>
-                        <Chip label="Policies" />
-                    </Divider>
-                </Grid>
-                <Grid item xs={12}>
-                    <Directives
-                        directives={directives}
-                        handleEditDirective={handleEditDirective} />
-                </Grid>
-            </Grid>
-            <AddEditDialog
-                isOpen={isOpen}
-                onClose={onClose}
-                directiveList={directiveList}
-                addSourcesToDirective={addSourcesToDirective}
-                dir={dir}
-                src={src}
-                suggestionList={suggestionList}
-                addSuggestion={addSuggestion} />
+                <AddEditDialog
+                    isOpen={isOpen}
+                    onClose={onClose}
+                    directiveList={directiveList}
+                    addSourcesToDirective={addSourcesToDirective}
+                    dir={dir}
+                    src={src}
+                    suggestionList={suggestionList}
+                    addSuggestion={addSuggestion} />
+            </Container>
         </Typography>
     </React.Fragment>)
 }

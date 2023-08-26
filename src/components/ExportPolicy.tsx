@@ -57,7 +57,7 @@ export const ExportPolicy: React.FC<ExportPolicyProps> = ({ directives, policyCo
             })
 
         setPolicyString(policyString);
-        setURL(window.btoa(policyString))
+        setURL(`${window.location.origin}?key=${window.btoa(policyString)}`)
     };
 
     useEffect(() => {

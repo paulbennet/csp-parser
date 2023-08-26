@@ -1,3 +1,4 @@
+import directives from "./directives";
 interface PolicyResult {
   [key: string]: string[];
 }
@@ -5,12 +6,17 @@ interface PolicyResult {
 const policyParser = (policy: string): PolicyResult => {
 
   const result: PolicyResult = {};
-
+  console.log(policy);
+  
   if (policy) {
     policy.split(";").forEach((directive) => {
-      const [directiveKey, ...directiveValue] = directive.trim().split(/\s+/g);
-      if (directiveKey && !Object.hasOwn(result, directiveKey)) {
-        result[directiveKey] = directiveValue;
+      if (directive.trim()) {
+        const [directiveKey, ...directiveValue] = directive.trim().split(/\s+/g);
+        if (directiveKey && !Object.hasOwn(result, directiveKey)) {
+          result[directiveKey] = directiveValue;
+        } else {
+          throw new Error("Invalid CSP")
+        }
       }
     });
   }
