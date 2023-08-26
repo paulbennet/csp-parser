@@ -124,8 +124,6 @@ export const evaluatePolicy = (directive: string, source: string): Boolean | str
     } else if (directive === Directive.REPORT_URI) {
         return REPORT_URI_PATTERN.test(source);
     } else if (directive === Directive.REPORT_TO) {
-        console.log(REPORT_TO_PATTERN.test(source));
-
         return REPORT_TO_PATTERN.test(source);
     }
     return false;

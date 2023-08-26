@@ -63,7 +63,6 @@ export const CSPTool: React.FC<CSPToolProps> = ({ directives: directivesFromURL 
             })
         suggestionList = Array.from(new Set(suggestionList));
         setSuggestionList(suggestionList);
-        console.log(directives);
 
     }, [directives]);
 

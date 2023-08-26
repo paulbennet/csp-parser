@@ -22,7 +22,7 @@ const App: React.FC = () => {
                 setDirectives(policyParser(key));
                 setValid(true)
             } catch (e) {
-                console.log(e);
+                console.error(e);
                 
                 setValid(false);
             }

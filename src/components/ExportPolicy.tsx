@@ -46,7 +46,6 @@ export const ExportPolicy: React.FC<ExportPolicyProps> = ({ directives, policyCo
 
     const constructPolicyString = () => {
         let policyString = "";
-        console.log(directives);
 
         Object.keys(directives)
             .forEach((directive) => {
@@ -69,7 +68,6 @@ export const ExportPolicy: React.FC<ExportPolicyProps> = ({ directives, policyCo
 
     const handleOpen = () => {
         setOpen(true);
-        console.log(directives);
     };
 
     const handleClose = () => {

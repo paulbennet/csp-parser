@@ -6,7 +6,6 @@ interface PolicyResult {
 const policyParser = (policy: string): PolicyResult => {
 
   const result: PolicyResult = {};
-  console.log(policy);
   
   if (policy) {
     policy.split(";").forEach((directive) => {
