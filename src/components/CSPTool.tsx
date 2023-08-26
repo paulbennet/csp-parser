@@ -7,13 +7,17 @@ import Chip from '@mui/material/Chip';
 import { Typography } from "@mui/material";
 import { policyParser } from "../utils/csp-parser";
 import directivesArray from "../utils/directives";
-import { AddDialog } from "./AddDialog";
+import { AddEditDialog } from "./AddEditDialog";
 
 export const CSPTool: React.FC = () => {
 
     const [directives, setDirectives] = useState<Object>({})
     const [directiveList, setDirectiveList] = useState<string[]>([]);
     const [isOpen, setOpen] = useState<boolean>(false);
+    const [policyCount, setPolicyCount] = useState<number>(0);
+    const [dir, setDir] = useState<string>("");
+    const [src, setSrc] = useState<string[]>([]);
+    const [suggestionList, setSuggestionList] = useState<string[]>([]);
 
     useEffect(() => {
         setDirectiveList(directivesArray);
@@ -27,7 +31,7 @@ export const CSPTool: React.FC = () => {
     useEffect(() => {
         const dirList = [...directivesArray];
         const keys = [];
-        Object.keys({...directives})
+        Object.keys({ ...directives })
             .forEach((directive) => {
                 if (directives[directive].length > 0) {
                     keys.push(directive);
@@ -38,15 +42,45 @@ export const CSPTool: React.FC = () => {
         })
 
         setDirectiveList(dirs);
+
+        let suggestionList = [];
+        Object.values(directives)
+            .forEach((sources) => {
+                if (sources.length > 0) {
+                    suggestionList.push(...sources)
+                    setPolicyCount((prev) => {
+                        return prev + 1;
+                    })
+                }
+            })
+        suggestionList = Array.from(new Set(suggestionList));
+        setSuggestionList(suggestionList);
         console.log(directives);
+
     }, [directives]);
 
     const onClose = () => {
         setOpen(false);
+        setDir("")
+        setSrc([]);
     }
 
-    const handleAddDirective = (policy: string, addPolicy: string) => {
+    const addSuggestion = (text: string) => {
+        let suggestions = [...suggestionList];
+        suggestions.push(text);
+        suggestions = Array.from(new Set(suggestions));
 
+        setSuggestionList(suggestions);
+    };
+
+    const handleAddDirective = (policy: string) => {
+        if (policy === "new") {
+            setDir("")
+            setSrc([]);
+            setOpen(true);
+
+            return;
+        }
         if (policy?.length > 0) {
             const csp = policyParser(policy);
             const dir = { ...directives }
@@ -59,31 +93,35 @@ export const CSPTool: React.FC = () => {
                     }
                 });
             setDirectives(dir);
-        } else if (addPolicy === "add-policy") {
-            setOpen(true);
         }
     };
 
-    const addSourcesToDirective = (dir: string, src: string) => {
+    const addSourcesToDirective = (dir: string, src: string[]) => {
         const policies = { ...directives };
 
         if (src.length === 0) {
             policies[dir] = [];
         } else if (policies[dir].length === 0) {
-            policies[dir] = src.split(", ");
+            policies[dir] = src;
         } else {
-            const sources = Array.from(new Set(src.split(", ")));
+            const sources = Array.from(new Set(src));
             policies[dir] = sources;
         }
         setDirectives(policies);
         setOpen(false);
     };
 
+    const handleEditDirective = (dir: string, src: string[]) => {
+        setDir(dir);
+        setSrc(src);
+        setOpen(true);
+    };
+
     return (<React.Fragment>
         <Typography component={'span'} variant={'body2'}>
             <Grid container spacing={4} sx={{ padding: "100px" }}>
                 <Grid item xs={12}>
-                    <ImportPolicy callback={handleAddDirective} />
+                    <ImportPolicy handleAddDirective={handleAddDirective} directives={directives} policyCount={policyCount} />
                 </Grid>
                 <Grid item xs={12}>
                     <Divider>
@@ -91,14 +129,20 @@ export const CSPTool: React.FC = () => {
                     </Divider>
                 </Grid>
                 <Grid item xs={12}>
-                    <Directives directives={directives} addSourcesToDirective={addSourcesToDirective} />
+                    <Directives
+                        directives={directives}
+                        handleEditDirective={handleEditDirective} />
                 </Grid>
             </Grid>
-            <AddDialog
+            <AddEditDialog
                 isOpen={isOpen}
                 onClose={onClose}
                 directiveList={directiveList}
-                addDirective={addSourcesToDirective} />
+                addSourcesToDirective={addSourcesToDirective}
+                dir={dir}
+                src={src}
+                suggestionList={suggestionList}
+                addSuggestion={addSuggestion} />
         </Typography>
     </React.Fragment>)
 }

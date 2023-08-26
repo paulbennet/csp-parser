@@ -4,22 +4,25 @@ import Fab from '@mui/material/Fab';
 import TextField from '@mui/material/TextField';
 import AddIcon from '@mui/icons-material/Add';
 import Tooltip from '@mui/material/Tooltip';
+import { ExportPolicy } from "./ExportPolicy";
 
 type Props = {
-    callback: Function
+    handleAddDirective: Function,
+    directives: Object,
+    policyCount: number
 };
 
-export const ImportPolicy: React.FC<Props> = ({ callback }) => {
+export const ImportPolicy: React.FC<Props> = ({ handleAddDirective, directives, policyCount }) => {
 
     const [text, setText] = useState("");
 
     const handleOnAdd = () => {
-        callback(undefined, "add-policy")
+        handleAddDirective("new")
     };
 
     useEffect(() => {
         const timer = setTimeout(() => {
-            callback(text);
+            handleAddDirective(text);
             setText("");
         }, 500)
 
@@ -33,15 +36,18 @@ export const ImportPolicy: React.FC<Props> = ({ callback }) => {
     };
 
     return (
-        <Grid container>
+        <Grid container spacing={1}>
             <Grid item xs={1}>
-                <Tooltip title="Add CSP">
+                <ExportPolicy directives={directives} policyCount={policyCount}/>
+            </Grid>
+            <Grid item xs={1}>
+                <Tooltip title="Add directive">
                     <Fab color="primary">
                         <AddIcon onClick={handleOnAdd} />
                     </Fab>
                 </Tooltip>
             </Grid>
-            <Grid item xs={11} sx={{ paddingLeft: "12px" }}>
+            <Grid item xs={10}>
                 <TextField
                     autoFocus={true}
                     fullWidth
