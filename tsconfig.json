@@ -19,7 +19,7 @@
     "noEmit": false, // Do not emit output (meaning do not compile code, only perform type checking)
     "jsx": "react", // Support JSX in .tsx files
     "sourceMap": true, // Generate corrresponding .map file
-    "declaration": true, // Generate corresponding .d.ts file
+    "declaration": false, // Generate corresponding .d.ts file
     "noUnusedParameters": true, // Report errors on unused parameters
     "incremental": true, // Enable incremental compilation by reading/writing information from prior compilations to a file on disk
     "noFallthroughCasesInSwitch": true // Report errors for fallthrough cases in switch statement
@@ -27,5 +27,5 @@
   "include": [
     "src/**/*" // *** The files TypeScript should type check ***
   ],
-  "exclude": ["node_modules", "build"],
+  "exclude": ["node_modules", "dist"],
 }

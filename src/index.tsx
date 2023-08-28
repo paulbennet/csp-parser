@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import { CSPTool } from "./components/CSPTool";
 import Header from "./components/Header";
 import { policyParser } from "./utils/csp-parser";
+import { ErrorPage } from "./components/ErrorPage";
 
 const App: React.FC = () => {
 
@@ -12,12 +13,14 @@ const App: React.FC = () => {
     useEffect(() => {
         if (window.location.search) {
             const searchParams = new URLSearchParams(location.search.substring(location.search.indexOf('?')));
-            const key = window.atob(searchParams.get("key"));
-
+            let key = searchParams.get("key");
+            console.log(key);
+            
             if (!key) {
                 setValid(false);
+                return;
             }
-
+            key = window.atob(key);
             try {
                 setDirectives(policyParser(key));
                 setValid(true)
@@ -34,10 +37,10 @@ const App: React.FC = () => {
 
     return <div className="app">
         {
-            valid && <>
+            valid ? <>
                 <Header />
                 <CSPTool directives={directives}/>
-            </>
+            </> : <ErrorPage />
 
         }
     </div>
