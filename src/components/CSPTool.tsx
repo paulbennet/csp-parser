@@ -5,7 +5,7 @@ import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
 import Chip from '@mui/material/Chip';
 import { Container, Typography } from "@mui/material";
-import { policyParser } from "../utils/csp-utils";
+import { getPolicyString, policyParser } from "../utils/csp-utils";
 import directivesArray from "../utils/directives";
 import { AddEditDialog } from "./AddEditDialog";
 
@@ -63,6 +63,8 @@ export const CSPTool: React.FC<CSPToolProps> = ({ directives: directivesFromURL 
             })
         suggestionList = Array.from(new Set(suggestionList));
         setSuggestionList(suggestionList);
+
+        window.history.replaceState({}, "", `${window.location.origin}?config=${window.btoa(getPolicyString(directives))}`);
 
     }, [directives]);
 

@@ -105,7 +105,7 @@ const isValidURL = (url: string) => {
 };
 
 export const evaluatePolicy = (directive: string, source: string): Boolean | string => {
-    
+
     source = source.trim();
 
     if (COMMON_DIRECTIVES.includes(directive)) {
@@ -141,7 +141,7 @@ export const evaluateSourcesAgainstDirective = (dir: string, sources: string[]) 
 };
 
 interface PolicyResult {
-  [key: string]: string[];
+    [key: string]: string[];
 }
 
 export const policyParser = (policy: string): PolicyResult => {
@@ -154,9 +154,9 @@ export const policyParser = (policy: string): PolicyResult => {
                 const [directiveKey, ...directiveValue] = directive.trim().split(/\s+/g);
                 if (directiveKey && !Object.hasOwn(result, directiveKey)) {
                     const sources = directiveValue.filter((source) => {
-                            return evaluatePolicy(directiveKey, source);
+                        return evaluatePolicy(directiveKey, source);
                     });
-                    
+
                     result[directiveKey] = sources;
                 } else {
                     throw new Error("Invalid CSP")
@@ -165,6 +165,20 @@ export const policyParser = (policy: string): PolicyResult => {
         });
     }
     return result;
+};
+
+export const getPolicyString = (directives: Object) => {
+    let policyString = "";
+
+    Object.keys(directives)
+        .forEach((directive) => {
+            if (directives[directive].length > 0) {
+                const policy = `${directive} ${directives[directive].join(" ")}; `;
+                policyString = policyString.concat(policy);
+            }
+        })
+    
+    return policyString;
 };
 
 export const sortSources = (sources: string[]) => {
@@ -183,5 +197,5 @@ export const sortSources = (sources: string[]) => {
     schemeSources.sort();
     hostSources.sort();
 
-    return [...schemeSources, ...hostSources];
+    return { schemeSources: schemeSources, hostSources: hostSources };
 };

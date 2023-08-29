@@ -119,7 +119,7 @@ export const AddEditDialog: React.FC<DialogProps> = ({
                 maxWidth={"md"}
                 onClose={handleClose}
             >
-                <DialogTitle>{"Add a Directive"}</DialogTitle>
+                <DialogTitle>{!dir ? "Add a Directive" : "Edit a Directive"}</DialogTitle>
                 <DialogContent dividers={true}>
                     <Container sx={{ padding: "5px" }}>
                         <Grid container spacing={1}>

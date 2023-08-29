@@ -13,7 +13,7 @@ const App: React.FC = () => {
     useEffect(() => {
         if (window.location.search) {
             const searchParams = new URLSearchParams(location.search.substring(location.search.indexOf('?')));
-            let key = searchParams.get("key");
+            let key = searchParams.get("config");
             console.log(key);
             
             if (!key) {

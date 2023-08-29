@@ -16,6 +16,7 @@ import Snackbar from '@mui/material/Snackbar';
 import IconButton from '@mui/material/IconButton';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import InputAdornment from '@mui/material/InputAdornment';
+import { getPolicyString } from "../utils/csp-utils";
 
 
 type ExportPolicyProps = {
@@ -43,18 +44,10 @@ export const ExportPolicy: React.FC<ExportPolicyProps> = ({ directives, policyCo
     const [snackbarMessage, setSnackbarMessage] = React.useState<string>("");
 
     const constructPolicyString = () => {
-        let policyString = "";
-
-        Object.keys(directives)
-            .forEach((directive) => {
-                if (directives[directive].length > 0) {
-                    const policy = `${directive} ${directives[directive].join(" ")}; `;
-                    policyString = policyString.concat(policy);
-                }
-            })
+        let policyString = getPolicyString(directives);
 
         setPolicyString(policyString);
-        setURL(`${window.location.origin}?key=${window.btoa(policyString)}`)
+        setURL(`${window.location.origin}?config=${window.btoa(policyString)}`)
     };
 
     useEffect(() => {

@@ -39,7 +39,7 @@ export default function Header() {
             <ThemeProvider theme={darkTheme}>
                 <AppBar position="absolute" color="primary">
                     {
-                        appBarLabel('CSP Tool')
+                        appBarLabel('CSP Config Manager')
                     }
                 </AppBar>
             </ThemeProvider>

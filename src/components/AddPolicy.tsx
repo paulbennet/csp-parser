@@ -29,9 +29,19 @@ const ListItem = styled('li')(({ theme }) => ({
 
 const DirectiveField: React.FC<DirectiveFieldProps> = ({ dir, src, handleEditDirective, handleDelete }) => {
 
+    const [schemeSources, setSchemeSources] = useState<string[]>([]);
+    const [hostSources, setHostSources] = useState<string[]>([]);
+
+    useEffect(() => {
+        const sources = sortSources(src);
+        setSchemeSources(sources.schemeSources);
+        setHostSources(sources.hostSources);
+    }, [src]);
+
     const handleEdit = () => {
         handleEditDirective(dir, src);
     };
+
 
     return (
         <Grid container sx={{
@@ -70,19 +80,47 @@ const DirectiveField: React.FC<DirectiveFieldProps> = ({ dir, src, handleEditDir
                     }}
                     component="ul"
                 >
-                    {src.map((data) => {
+                    {
+                        schemeSources.length > 0 && 
+                        schemeSources.map((data) => {
 
-                        return (
-                            <ListItem key={data}>
-                                <Chip
-                                    onDelete={() => {
-                                        handleDelete(dir, data);
-                                    }}
-                                    label={data}
-                                />
-                            </ListItem>
-                        );
-                    })}
+                            return (
+                                <ListItem key={data}>
+                                    <Chip
+                                        sx={{
+                                            backgroundColor: "#F1F8E9",
+                                            // backgroundColor: "#d2e3fc",
+                                            color: "#000"
+                                        }}
+                                        onDelete={() => {
+                                            handleDelete(dir, data);
+                                        }}
+                                        label={data}
+                                    />
+                                </ListItem>
+                            );
+                        })
+                    }
+                    {
+                        hostSources.length > 0 && 
+                        hostSources.map((data) => {
+
+                            return (
+                                <ListItem key={data}>
+                                    <Chip
+                                        sx={{
+                                            backgroundColor: "#E1F5FE",
+                                            color: "#000"
+                                        }}
+                                        onDelete={() => {
+                                            handleDelete(dir, data);
+                                        }}
+                                        label={data}
+                                    />
+                                </ListItem>
+                            );
+                        })
+                    }
                 </Paper>
             </Grid>
             <Grid item xs={1}
@@ -113,7 +151,7 @@ export const Directives: React.FC<DirectivesProps> = ({ directives, handleEditDi
             })
     }, [directives]);
 
-    const handleDelete = (dir:string, str: string) => {
+    const handleDelete = (dir: string, str: string) => {
 
         let sources = directives[dir];
 
@@ -131,13 +169,10 @@ export const Directives: React.FC<DirectivesProps> = ({ directives, handleEditDi
                     isOpen && Object.keys(directives)
                         .map((directive) => {
                             if (directives[directive].length > 0) {
-
-                                const source = sortSources(directives[directive]);
-
                                 return <Grid key={directive} item xs={12}>
                                     <DirectiveField
                                         dir={directive}
-                                        src={source}
+                                        src={directives[directive]}
                                         handleDelete={handleDelete}
                                         handleEditDirective={handleEditDirective} />
                                 </Grid>
