@@ -105,6 +105,7 @@ const isValidURL = (url: string) => {
 };
 
 export const evaluatePolicy = (directive: string, source: string): Boolean | string => {
+    
     source = source.trim();
 
     if (COMMON_DIRECTIVES.includes(directive)) {
@@ -115,6 +116,8 @@ export const evaluatePolicy = (directive: string, source: string): Boolean | str
         } else if (isValidURL(source)) {
             return true;
         } else if (isNonce(source)) {
+            return true;
+        } else if (source === "*") {
             return true;
         }
     } else if (directive === Directive.SANDBOX) {
@@ -128,3 +131,57 @@ export const evaluatePolicy = (directive: string, source: string): Boolean | str
     }
     return false;
 }
+
+export const evaluateSourcesAgainstDirective = (dir: string, sources: string[]) => {
+    const src = sources.filter((source) => {
+        return evaluatePolicy(dir, source);
+    });
+
+    return src;
+};
+
+interface PolicyResult {
+  [key: string]: string[];
+}
+
+export const policyParser = (policy: string): PolicyResult => {
+
+    const result: PolicyResult = {};
+
+    if (policy) {
+        policy.split(";").forEach((directive) => {
+            if (directive.trim()) {
+                const [directiveKey, ...directiveValue] = directive.trim().split(/\s+/g);
+                if (directiveKey && !Object.hasOwn(result, directiveKey)) {
+                    const sources = directiveValue.filter((source) => {
+                            return evaluatePolicy(directiveKey, source);
+                    });
+                    
+                    result[directiveKey] = sources;
+                } else {
+                    throw new Error("Invalid CSP")
+                }
+            }
+        });
+    }
+    return result;
+};
+
+export const sortSources = (sources: string[]) => {
+
+    const schemeSources = [];
+    const hostSources = [];
+
+    sources.forEach((source) => {
+        if (isKeyword(source)) {
+            schemeSources.push(source)
+        } else {
+            hostSources.push(source);
+        }
+    });
+
+    schemeSources.sort();
+    hostSources.sort();
+
+    return [...schemeSources, ...hostSources];
+};

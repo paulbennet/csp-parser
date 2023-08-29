@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
 import { Snackbar, TextField } from '@mui/material';
-import { evaluatePolicy } from '../utils/csp-evaluator';
+import { evaluatePolicy } from '../utils/csp-utils';
 
 const filter = createFilterOptions<string>();
 
 type AutoCompleteTextFieldProps = {
     directive: string,
-    suggestionList: string[],
+    suggestions: string[],
     handleAddSources: Function
 }
 
-export const AutoCompleteTextField: React.FC<AutoCompleteTextFieldProps> = ({ directive, suggestionList, handleAddSources }) => {
+export const AutoCompleteTextField: React.FC<AutoCompleteTextFieldProps> = ({ directive, suggestions, handleAddSources }) => {
     const [value, setValue] = useState<string | null>("");
     const [inputValue, setInputValue] = useState("");
     const [snackbarOpen, setSnackbarOpen] = React.useState<boolean>(false);
@@ -53,7 +53,7 @@ export const AutoCompleteTextField: React.FC<AutoCompleteTextFieldProps> = ({ di
 
                 setInputValue(newInputValue);
             }}
-            options={suggestionList}
+            options={suggestions}
             filterOptions={(options, params) => {
                 const filtered = filter(options, params);
                 const { inputValue } = params;

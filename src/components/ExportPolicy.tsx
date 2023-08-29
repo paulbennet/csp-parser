@@ -5,19 +5,17 @@ import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import TextField from '@mui/material/TextField';
 import DialogTitle from '@mui/material/DialogTitle';
 import Slide from '@mui/material/Slide';
 import { TransitionProps } from '@mui/material/transitions';
 import Grid from '@mui/material/Grid';
 import FormControl from '@mui/material/FormControl';
 import FilledInput from '@mui/material/FilledInput';
-import InputLabel from '@mui/material/InputLabel';
-import { Typography } from "@mui/material";
 import DialogContentText from '@mui/material/DialogContentText';
-import InputAdornment from '@mui/material/InputAdornment';
-import DataObjectIcon from '@mui/icons-material/DataObject';
 import Snackbar from '@mui/material/Snackbar';
+import IconButton from '@mui/material/IconButton';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import InputAdornment from '@mui/material/InputAdornment';
 
 
 type ExportPolicyProps = {
@@ -116,31 +114,55 @@ export const ExportPolicy: React.FC<ExportPolicyProps> = ({ directives, policyCo
                     <Grid item xs={12}>
                         <DialogContentText>Policy String</DialogContentText>
                         <FormControl fullWidth>
-                            <FilledInput readOnly value={policyString} onClick={() => {
-                                handleOnClick("policyString");
-                            }} />
+                            <FilledInput
+                                endAdornment={<InputAdornment position="end">
+                                    <IconButton
+                                        onClick={() => {
+                                            handleOnClick("policyString");
+                                        }} color="primary" sx={{ p: '10px' }} aria-label="directions">
+                                        <ContentCopyIcon />
+                                    </IconButton>
+                                </InputAdornment>}
+                                readOnly
+                                value={policyString} />
                         </FormControl>
                     </Grid>
                     <Grid item xs={12}>
                         <DialogContentText>JSON</DialogContentText>
                         <FormControl fullWidth>
-                            <FilledInput readOnly value={json} onClick={() => {
-                                handleOnClick("json");
-                            }} />
+                            <FilledInput
+                                endAdornment={<InputAdornment position="end">
+                                    <IconButton
+                                        onClick={() => {
+                                            handleOnClick("json");
+                                        }} color="primary" sx={{ p: '10px' }} aria-label="directions">
+                                        <ContentCopyIcon />
+                                    </IconButton>
+                                </InputAdornment>}
+                                readOnly
+                                value={json} />
                         </FormControl>
                     </Grid>
                     <Grid item xs={12}>
                         <DialogContentText>URL</DialogContentText>
                         <FormControl fullWidth>
-                            <FilledInput readOnly value={url} onClick={() => {
-                                handleOnClick("url");
-                            }}/>
+                            <FilledInput
+                                endAdornment={<InputAdornment position="end">
+                                    <IconButton
+                                        onClick={() => {
+                                            handleOnClick("url");
+                                        }}
+                                        color="primary" sx={{ p: '10px' }} aria-label="directions">
+                                        <ContentCopyIcon />
+                                    </IconButton>
+                                </InputAdornment>}
+                                readOnly value={url} />
                         </FormControl>
                     </Grid>
                 </Grid>
             </DialogContent>
             <DialogActions>
-                <Button onClick={handleClose}>Cancel</Button>
+                <Button onClick={handleClose}>Close</Button>
             </DialogActions>
         </Dialog>
         <Snackbar

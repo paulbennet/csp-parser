@@ -21,6 +21,7 @@ import ListItemText from '@mui/material/ListItemText';
 import DeleteIcon from '@mui/icons-material/Delete';
 import IconButton from '@mui/material/IconButton';
 import { AutoCompleteTextField } from "./AutoComplete";
+import { evaluateSourcesAgainstDirective } from "../utils/csp-utils";
 
 type DialogProps = {
     onClose: Function,
@@ -53,6 +54,7 @@ export const AddEditDialog: React.FC<DialogProps> = ({
     addSuggestion }) => {
     const [directive, setDirective] = useState<string>("");
     const [sources, setSources] = useState<string[]>([]);
+    const [suggestions, setSuggestions] = useState<string[]>([]);
 
     const handleClose = () => {
         onClose();
@@ -67,6 +69,14 @@ export const AddEditDialog: React.FC<DialogProps> = ({
             setSources(src || []);
         }
     }, [isOpen, directiveList])
+
+    useEffect(() => {
+        let suggestions = suggestionList.filter((suggestion) => {
+            return !sources.includes(suggestion);
+        });
+        suggestions = evaluateSourcesAgainstDirective(directive, suggestions);
+        setSuggestions(suggestions);
+    }, [sources, suggestionList, directive])
 
     const handleAdd = () => {
         addSourcesToDirective(directive, sources)
@@ -145,7 +155,7 @@ export const AddEditDialog: React.FC<DialogProps> = ({
                                 }
                             </Grid>
                             <Grid item xs={9}>
-                                <AutoCompleteTextField directive={directive} handleAddSources={handleAddSources} suggestionList={suggestionList} />
+                                <AutoCompleteTextField directive={directive} handleAddSources={handleAddSources} suggestions={suggestions} />
                                 <List sx={{
                                     width: '100%',
                                     bgcolor: 'background.paper',

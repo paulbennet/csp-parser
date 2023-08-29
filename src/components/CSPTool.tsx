@@ -5,7 +5,7 @@ import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
 import Chip from '@mui/material/Chip';
 import { Container, Typography } from "@mui/material";
-import { policyParser } from "../utils/csp-parser";
+import { policyParser } from "../utils/csp-utils";
 import directivesArray from "../utils/directives";
 import { AddEditDialog } from "./AddEditDialog";
 
@@ -138,6 +138,7 @@ export const CSPTool: React.FC<CSPToolProps> = ({ directives: directivesFromURL 
                     </Grid>
                     <Grid item xs={12}>
                         <Directives
+                            addSourcesToDirective={addSourcesToDirective}
                             directives={directives}
                             handleEditDirective={handleEditDirective} />
                     </Grid>

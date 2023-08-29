@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom/client";
 import { CSPTool } from "./components/CSPTool";
 import Header from "./components/Header";
-import { policyParser } from "./utils/csp-parser";
+import { policyParser } from "./utils/csp-utils";
 import { ErrorPage } from "./components/ErrorPage";
 
 const App: React.FC = () => {

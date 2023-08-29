@@ -8,15 +8,18 @@ import Paper from '@mui/material/Paper';
 import { styled } from '@mui/material/styles';
 import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
+import { sortSources } from "../utils/csp-utils";
 
 type DirectivesProps = {
     directives: Object,
-    handleEditDirective: Function
+    handleEditDirective: Function,
+    addSourcesToDirective: Function
 };
 
 type DirectiveFieldProps = {
     dir: string,
     src: string[],
+    handleDelete: Function,
     handleEditDirective: Function
 };
 
@@ -24,7 +27,7 @@ const ListItem = styled('li')(({ theme }) => ({
     margin: theme.spacing(0.5),
 }));
 
-const DirectiveField: React.FC<DirectiveFieldProps> = ({ dir, src, handleEditDirective }) => {
+const DirectiveField: React.FC<DirectiveFieldProps> = ({ dir, src, handleEditDirective, handleDelete }) => {
 
     const handleEdit = () => {
         handleEditDirective(dir, src);
@@ -72,6 +75,9 @@ const DirectiveField: React.FC<DirectiveFieldProps> = ({ dir, src, handleEditDir
                         return (
                             <ListItem key={data}>
                                 <Chip
+                                    onDelete={() => {
+                                        handleDelete(dir, data);
+                                    }}
                                     label={data}
                                 />
                             </ListItem>
@@ -94,7 +100,7 @@ const DirectiveField: React.FC<DirectiveFieldProps> = ({ dir, src, handleEditDir
 };
 
 
-export const Directives: React.FC<DirectivesProps> = ({ directives, handleEditDirective }) => {
+export const Directives: React.FC<DirectivesProps> = ({ directives, handleEditDirective, addSourcesToDirective }) => {
 
     const [isOpen, setOpen] = useState(false);
 
@@ -107,6 +113,17 @@ export const Directives: React.FC<DirectivesProps> = ({ directives, handleEditDi
             })
     }, [directives]);
 
+    const handleDelete = (dir:string, str: string) => {
+
+        let sources = directives[dir];
+
+        sources = sources.filter((src) => {
+            return src !== str;
+        });
+
+        addSourcesToDirective(dir, sources);
+    };
+
     return <React.Fragment>
         <Container fixed>
             <Grid container spacing={2}>
@@ -114,13 +131,16 @@ export const Directives: React.FC<DirectivesProps> = ({ directives, handleEditDi
                     isOpen && Object.keys(directives)
                         .map((directive) => {
                             if (directives[directive].length > 0) {
-                                return <Grid key={directive} item xs={12}>
-                                    <DirectiveField 
-                                    dir={directive} 
-                                    src={directives[directive]} 
-                                    handleEditDirective={handleEditDirective} />
-                                </Grid>
 
+                                const source = sortSources(directives[directive]);
+
+                                return <Grid key={directive} item xs={12}>
+                                    <DirectiveField
+                                        dir={directive}
+                                        src={source}
+                                        handleDelete={handleDelete}
+                                        handleEditDirective={handleEditDirective} />
+                                </Grid>
                             }
                         })
                 }
