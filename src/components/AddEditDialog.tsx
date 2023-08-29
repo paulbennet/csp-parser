@@ -63,7 +63,7 @@ export const AddEditDialog: React.FC<DialogProps> = ({
             setDirective("");
             setSources([]);
         } else {
-            setDirective(dir || "");
+            setDirective(dir || directiveList[0]);
             setSources(src || []);
         }
     }, [isOpen, directiveList])
@@ -118,9 +118,10 @@ export const AddEditDialog: React.FC<DialogProps> = ({
                                     !dir && <FormControl sx={{ minWidth: 180, maxWidth: 180 }} size="small">
                                         <InputLabel>Directives</InputLabel>
                                         <Select
+                                            inputProps={{ readOnly: sources.length > 0 }}
                                             value={directive}
                                             onChange={handleDirectiveChange}
-                                            input={<OutlinedInput label="Directives" />}
+                                            input={<OutlinedInput label="Directive" />}
                                         >
                                             {directiveList.map((name) => (
                                                 <MenuItem key={name} value={name}>
