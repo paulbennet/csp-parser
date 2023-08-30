@@ -25,8 +25,8 @@ const App: React.FC = () => {
                 setValid(false);
                 return;
             }
-            key = window.atob(key);
             try {
+                key = window.atob(key);
                 setDirectives(policyParser(key));
                 setValid(true)
             } catch (e) {
