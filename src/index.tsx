@@ -15,6 +15,11 @@ const App: React.FC = () => {
             const searchParams = new URLSearchParams(location.search.substring(location.search.indexOf('?')));
             let key = searchParams.get("config");
             console.log(key);
+
+            if (key === "") {
+                setValid(true);
+                return;
+            }
             
             if (!key) {
                 setValid(false);
