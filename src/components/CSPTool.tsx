@@ -106,7 +106,7 @@ export const CSPTool: React.FC<CSPToolProps> = ({ directives: directivesFromURL 
 
         if (src.length === 0) {
             policies[dir] = [];
-        } else if (policies[dir].length === 0) {
+        } else if (!policies[dir] || policies[dir].length === 0) {
             policies[dir] = src;
         } else {
             const sources = Array.from(new Set(src));
