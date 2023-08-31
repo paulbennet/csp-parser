@@ -52,6 +52,7 @@ enum Directive {
     STYLE_SRC_ATTR = 'style-src-attr',
     STYLE_SRC_ELEM = 'style-src-elem',
     PREFETCH_SRC = 'prefetch-src',
+    FRAME_ANCESTORS = 'frame-ancestors',
 
     MANIFEST_SRC = 'manifest-src',
     WORKER_SRC = 'worker-src',
@@ -75,7 +76,8 @@ const COMMON_DIRECTIVES: string[] = [
     Directive.MANIFEST_SRC, Directive.MEDIA_SRC, Directive.OBJECT_SRC,
     Directive.SCRIPT_SRC, Directive.SCRIPT_SRC_ATTR, Directive.SCRIPT_SRC_ELEM,
     Directive.STYLE_SRC, Directive.STYLE_SRC_ATTR, Directive.STYLE_SRC_ELEM,
-    Directive.WORKER_SRC, Directive.BASE_URI, Directive.NAVIGATE_TO, Directive.FORM_ACTION
+    Directive.WORKER_SRC, Directive.BASE_URI, Directive.NAVIGATE_TO, Directive.FORM_ACTION,
+    Directive.FRAME_ANCESTORS
 ];
 
 function isKeyword(keyword: string): boolean {
@@ -177,7 +179,7 @@ export const getPolicyString = (directives: Object) => {
                 policyString = policyString.concat(policy);
             }
         })
-    
+
     return policyString;
 };
 
