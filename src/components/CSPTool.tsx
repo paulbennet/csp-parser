@@ -18,7 +18,6 @@ export const CSPTool: React.FC<CSPToolProps> = ({ directives: directivesFromURL 
     const [directives, setDirectives] = useState<Object>({})
     const [directiveList, setDirectiveList] = useState<string[]>([]);
     const [isOpen, setOpen] = useState<boolean>(false);
-    const [policyCount, setPolicyCount] = useState<number>(0);
     const [dir, setDir] = useState<string>("");
     const [src, setSrc] = useState<string[]>([]);
     const [suggestionList, setSuggestionList] = useState<string[]>([]);
@@ -56,9 +55,6 @@ export const CSPTool: React.FC<CSPToolProps> = ({ directives: directivesFromURL 
             .forEach((sources) => {
                 if (sources.length > 0) {
                     suggestionList.push(...sources)
-                    setPolicyCount((prev) => {
-                        return prev + 1;
-                    })
                 }
             })
         suggestionList = Array.from(new Set(suggestionList));
@@ -126,12 +122,34 @@ export const CSPTool: React.FC<CSPToolProps> = ({ directives: directivesFromURL 
         setOpen(true);
     };
 
+    const handleReset = () => {
+        const dirs = {};
+        directivesArray.forEach((directive) => {
+            dirs[directive] = [];
+        });
+        setDirectives(dirs);
+    };
+
+    const handleReplace = (oldString: string, newString: string) => {
+        const dirs = {...directives};
+
+        let policyString = getPolicyString(dirs);
+        policyString = policyString.replaceAll(oldString, newString);
+
+        const parsedPolicy = policyParser(policyString);
+        setDirectives(parsedPolicy);    
+    }
+
     return (<React.Fragment>
         <Typography component={'span'} variant={'body2'}>
             <Container fixed>
                 <Grid container spacing={4} sx={{ padding: "100px" }}>
                     <Grid item xs={12}>
-                        <ImportPolicy handleAddDirective={handleAddDirective} directives={directives} policyCount={policyCount} />
+                        <ImportPolicy 
+                        handleReplace={handleReplace}
+                        handleReset={handleReset} 
+                        handleAddDirective={handleAddDirective} 
+                        directives={directives} />
                     </Grid>
                     <Grid item xs={12}>
                         <Divider>
