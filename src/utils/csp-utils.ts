@@ -159,7 +159,7 @@ export const policyParser = (policy: string): PolicyResult => {
                         return evaluatePolicy(directiveKey, source);
                     });
 
-                    result[directiveKey] = sources;
+                    result[directiveKey] = Array.from(new Set(sources));
                 } else {
                     throw new Error("Invalid CSP")
                 }

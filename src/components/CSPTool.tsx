@@ -140,12 +140,31 @@ export const CSPTool: React.FC<CSPToolProps> = ({ directives: directivesFromURL 
         setDirectives(parsedPolicy);    
     }
 
+    const deleteSourcesWithRegex = (regex: string) => {
+        const rex = new RegExp(regex);
+        const dirs = { ...directives };
+
+        Object.keys(dirs)
+            .forEach((directive) => {
+                if (dirs[directive].length > 0) {
+                    const filteredSourceList = dirs[directive]
+                        .filter((source) => {
+                            return rex.exec(source) === null;
+                        })
+                    dirs[directive] = filteredSourceList;
+                }
+            });
+        
+            setDirectives(dirs);
+    };
+
     return (<React.Fragment>
         <Typography component={'span'} variant={'body2'}>
             <Container fixed>
                 <Grid container spacing={4} sx={{ padding: "100px" }}>
                     <Grid item xs={12}>
                         <ImportPolicy 
+                            deleteSourcesWithRegex={deleteSourcesWithRegex}
                         handleReplace={handleReplace}
                         handleReset={handleReset} 
                         handleAddDirective={handleAddDirective} 

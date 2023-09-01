@@ -7,13 +7,14 @@ import Tooltip from '@mui/material/Tooltip';
 import { ExportPolicy } from "./ExportPolicy";
 
 type Props = {
+    deleteSourcesWithRegex: Function,
     handleReplace: Function,
     handleReset: Function,
     handleAddDirective: Function,
     directives: Object,
 };
 
-export const ImportPolicy: React.FC<Props> = ({ handleReplace, handleReset, handleAddDirective, directives }) => {
+export const ImportPolicy: React.FC<Props> = ({ deleteSourcesWithRegex, handleReplace, handleReset, handleAddDirective, directives }) => {
 
     const [text, setText] = useState("");
 
@@ -39,7 +40,7 @@ export const ImportPolicy: React.FC<Props> = ({ handleReplace, handleReset, hand
     return (
         <Grid container spacing={1}>
             <Grid item xs={1} sx={{ overflowY: "hidden" }}>
-                <ExportPolicy handleReplace={handleReplace} handleReset={handleReset} directives={directives}/>
+                <ExportPolicy deleteSourcesWithRegex={deleteSourcesWithRegex} handleReplace={handleReplace} handleReset={handleReset} directives={directives}/>
             </Grid>
             <Grid item xs={1}>
                 <Tooltip title="Add directive">

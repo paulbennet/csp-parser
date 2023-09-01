@@ -22,10 +22,10 @@ import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import FindReplaceIcon from '@mui/icons-material/FindReplace';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Fab from '@mui/material/Fab';
-
-
+import RemoveIcon from '@mui/icons-material/Remove';
 
 type ExportPolicyProps = {
+    deleteSourcesWithRegex: Function,
     handleReplace: Function,
     handleReset: Function,
     directives: Object,
@@ -44,14 +44,16 @@ const actions = [
     { icon: <IosShareIcon />, name: 'Export' },
     { icon: <FindReplaceIcon />, name: 'Replace' },
     { icon: <RestartAltIcon />, name: 'Reset' },
+    { icon: <RemoveIcon />, name: 'Delete' },
 ];
 
 const titles = {
     "Export": "Export Policy",
-    "Replace": "Replace sources"
+    "Replace": "Replace sources",
+    "Delete": "Delete all sources"
 }
 
-export const ExportPolicy: React.FC<ExportPolicyProps> = ({ handleReplace, handleReset, directives }) => {
+export const ExportPolicy: React.FC<ExportPolicyProps> = ({ deleteSourcesWithRegex, handleReplace, handleReset, directives }) => {
 
     const [isOpen, setOpen] = useState<boolean>(false);
     const [json, setJson] = useState<string>("");
@@ -62,6 +64,7 @@ export const ExportPolicy: React.FC<ExportPolicyProps> = ({ handleReplace, handl
     const [action, setAction] = useState("");
     const [oldSourceName, setOldSourceName] = useState("");
     const [newSourceName, setNewSourceName] = useState("");
+    const [regex, setRegex] = useState("");
 
     const constructPolicyString = () => {
         let policyString = getPolicyString(directives);
@@ -125,11 +128,27 @@ export const ExportPolicy: React.FC<ExportPolicyProps> = ({ handleReplace, handl
         setNewSourceName(event.target.value)
     };
 
+    const handleRegexChange = (event) => {
+        setRegex(event.target.value);
+    }
+
     const handleReplaceSources = () => {
         handleReplace(oldSourceName, newSourceName)
         setOpen(false);
         setSnackbarMessage("Sources have been replaced with new values!");
         setSnackbarOpen(true);
+        setNewSourceName("");
+        setOldSourceName("");
+    }
+
+    const handleDeleteSourcesWithRegex = () => {
+        if (regex.trim()) {
+            deleteSourcesWithRegex(regex);
+            setOpen(false);
+            setSnackbarMessage("Sources have been deleted!");
+            setSnackbarOpen(true);
+            setRegex("");
+        }
     }
 
     return <>
@@ -152,13 +171,13 @@ export const ExportPolicy: React.FC<ExportPolicyProps> = ({ handleReplace, handl
             open={isOpen}
             TransitionComponent={Transition}
             fullWidth={true}
-            maxWidth={"md"}
+            maxWidth={action === "Delete" ? "sm" : "md"}
             onClose={handleClose}
         >
             <DialogTitle>{titles[action]}</DialogTitle>
             <DialogContent>
                 {
-                    action === "Export" ? <Grid container spacing={5}>
+                    action === "Export" && <Grid container spacing={5}>
                         <Grid item xs={12}>
                             <DialogContentText>Policy String</DialogContentText>
                             <FormControl fullWidth>
@@ -207,7 +226,10 @@ export const ExportPolicy: React.FC<ExportPolicyProps> = ({ handleReplace, handl
                                     readOnly value={url} />
                             </FormControl>
                         </Grid>
-                    </Grid> : <Grid container spacing={5}>
+                    </Grid>
+                }
+                {
+                    action === "Replace" && <Grid container spacing={5}>
                         <Grid item xs={5}>
                             <DialogContentText>Old Source name</DialogContentText>
                             <FormControl fullWidth>
@@ -227,9 +249,23 @@ export const ExportPolicy: React.FC<ExportPolicyProps> = ({ handleReplace, handl
                         </Grid>
                     </Grid>
                 }
+                {
+                    action === "Delete" && <Grid container spacing={1}>
+                        <Grid item xs={12}>
+                            <DialogContentText>Source name to delete</DialogContentText>
+                            <FormControl fullWidth>
+                                <FilledInput autoFocus value={regex} onChange={handleRegexChange} />
+                            </FormControl>
+                        </Grid>
+                    </Grid>
+                }
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleClose}>Close</Button>
+                {
+                    action === "Delete" &&
+                    <Button variant="contained" onClick={handleDeleteSourcesWithRegex}>Delete</Button>
+                }
             </DialogActions>
         </Dialog>
         <Snackbar

@@ -95,6 +95,9 @@ const DirectiveField: React.FC<DirectiveFieldProps> = ({ dir, src, handleEditDir
                                         onDelete={() => {
                                             handleDelete(dir, data);
                                         }}
+                                        onClick={() => {
+                                            navigator.clipboard.writeText(data)
+                                        }}
                                         label={data}
                                     />
                                 </ListItem>
