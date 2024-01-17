@@ -12,13 +12,13 @@ interface AutoCompleteTextFieldProps {
 }
 
 export const AutoCompleteTextField: React.FC<AutoCompleteTextFieldProps> = ({ directive, suggestions, handleAddSources }) => {
-  const [value, setValue] = useState<string>('')
+  const [value, setValue] = useState<string | null>('')
   const [inputValue, setInputValue] = useState('')
   const [snackbarOpen, setSnackbarOpen] = React.useState<boolean>(false)
   const [snackbarMessage, setSnackbarMessage] = React.useState<string>('')
 
   useEffect(() => {
-    if (value.length > 0) {
+    if (value !== null && value.length > 0) {
       if (evaluatePolicy(directive, value) === true) {
         handleAddSources(value)
         setValue('')
