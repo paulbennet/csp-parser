@@ -45,7 +45,7 @@ const App: React.FC = () => {
 
   return (
     <div className="app">
-        <SnackbarProvider />
+        <SnackbarProvider autoHideDuration={3000} />
         {
             valid
               ? (

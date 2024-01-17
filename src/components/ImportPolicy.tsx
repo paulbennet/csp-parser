@@ -23,8 +23,13 @@ export const ImportPolicy: React.FC<Props> = ({ deleteSourcesWithRegex, handleRe
   }
 
   useEffect(() => {
+    const currentValue = text.trim()
+
+    if (currentValue.length > 0) {
+      handleAddDirective(currentValue)
+    }
+
     const timer = setTimeout(() => {
-      handleAddDirective(text)
       setText('')
     }, 500)
 
