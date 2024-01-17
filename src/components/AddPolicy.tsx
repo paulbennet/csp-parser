@@ -13,7 +13,7 @@ import { enqueueSnackbar } from 'notistack'
 
 interface DirectiveFieldProps {
   dir: string
-  src: string[]
+  src: string[] | undefined
   handleDelete: (dir, str) => void
   handleEditDirective: (dir, src) => void
 }
@@ -27,7 +27,7 @@ const DirectiveField: React.FC<DirectiveFieldProps> = ({ dir, src, handleEditDir
   const [hostSources, setHostSources] = useState<string[]>([])
 
   useEffect(() => {
-    const sources = sortSources(src)
+    const sources = sortSources(src ?? [])
     setSchemeSources(sources.schemeSources)
     setHostSources(sources.hostSources)
   }, [src])
@@ -37,105 +37,105 @@ const DirectiveField: React.FC<DirectiveFieldProps> = ({ dir, src, handleEditDir
   }
 
   return (
-        <Grid container sx={{
-          display: 'flex',
-          justifyContent: 'start',
-          alignItems: 'baseline',
-          '&:hover': {
-            '.MuiGrid-grid-xs-1': {
-              display: 'inline-block'
-            }
-          }
-        }}>
-            <Grid item xs={3}>
-                <Badge badgeContent={src.length} color="primary">
-                    <TextField
-                        fullWidth
-                        size="small"
-                        label="Directive"
-                        InputProps={{
-                          readOnly: true
-                        }}
-                        onClick={() => {
-                          void navigator.clipboard.writeText(dir)
-                          enqueueSnackbar('📋 Directive name copied')
-                        }}
-                        value={dir}
-                    />
-                </Badge>
-            </Grid>
-            <Grid item xs={8}>
-                <Paper
+    <Grid container sx={{
+      display: 'flex',
+      justifyContent: 'start',
+      alignItems: 'baseline',
+      '&:hover': {
+        '.MuiGrid-grid-xs-1': {
+          display: 'inline-block'
+        }
+      }
+    }}>
+      <Grid item xs={3}>
+        <Badge badgeContent={src?.length} color="primary">
+          <TextField
+            fullWidth
+            size="small"
+            label="Directive"
+            InputProps={{
+              readOnly: true
+            }}
+            onClick={() => {
+              void navigator.clipboard.writeText(dir)
+              enqueueSnackbar('📋 Directive name copied')
+            }}
+            value={dir}
+          />
+        </Badge>
+      </Grid>
+      <Grid item xs={8}>
+        <Paper
+          sx={{
+            display: 'flex',
+            justifyContent: 'start',
+            flexWrap: 'wrap',
+            listStyle: 'none',
+            p: 0.5,
+            m: 0
+          }}
+          component="ul"
+        >
+          {
+            schemeSources.length > 0 &&
+            schemeSources.map((data) => {
+              return (
+                <ListItem key={data}>
+                  <Chip
                     sx={{
-                      display: 'flex',
-                      justifyContent: 'start',
-                      flexWrap: 'wrap',
-                      listStyle: 'none',
-                      p: 0.5,
-                      m: 0
+                      backgroundColor: '#F1F8E9',
+                      // backgroundColor: "#d2e3fc",
+                      color: '#000'
                     }}
-                    component="ul"
-                >
-                    {
-                        schemeSources.length > 0 &&
-                        schemeSources.map((data) => {
-                          return (
-                                <ListItem key={data}>
-                                    <Chip
-                                        sx={{
-                                          backgroundColor: '#F1F8E9',
-                                          // backgroundColor: "#d2e3fc",
-                                          color: '#000'
-                                        }}
-                                        onDelete={() => {
-                                          handleDelete(dir, data)
-                                        }}
-                                        onClick={() => {
-                                          void navigator.clipboard.writeText(data)
-                                          enqueueSnackbar('📋 Value copied')
-                                        }}
-                                        label={data}
-                                    />
-                                </ListItem>
-                          )
-                        })
-                    }
-                    {
-                        hostSources.length > 0 &&
-                        hostSources.map((data) => {
-                          return (
-                                <ListItem key={data}>
-                                    <Chip
-                                        sx={{
-                                          backgroundColor: '#E1F5FE',
-                                          color: '#000'
-                                        }}
-                                        onDelete={() => {
-                                          handleDelete(dir, data)
-                                        }}
-                                        onClick={() => {
-                                          void navigator.clipboard.writeText(data)
-                                          enqueueSnackbar('📋 Value copied')
-                                        }}
-                                        label={data}
-                                    />
-                                </ListItem>
-                          )
-                        })
-                    }
-                </Paper>
-            </Grid>
-            <Grid item xs={1}
-                sx={{
-                  display: 'none'
-                }}
-            >
-                <IconButton onClick={handleEdit}>
-                    <EditIcon />
-                </IconButton>
+                    onDelete={() => {
+                      handleDelete(dir, data)
+                    }}
+                    onClick={() => {
+                      void navigator.clipboard.writeText(data)
+                      enqueueSnackbar('📋 Value copied')
+                    }}
+                    label={data}
+                  />
+                </ListItem>
+              )
+            })
+          }
+          {
+            hostSources.length > 0 &&
+            hostSources.map((data) => {
+              return (
+                <ListItem key={data}>
+                  <Chip
+                    sx={{
+                      backgroundColor: '#E1F5FE',
+                      color: '#000'
+                    }}
+                    onDelete={() => {
+                      handleDelete(dir, data)
+                    }}
+                    onClick={() => {
+                      void navigator.clipboard.writeText(data)
+                      enqueueSnackbar('📋 Value copied')
+                    }}
+                    label={data}
+                  />
+                </ListItem>
+              )
+            })
+          }
+        </Paper>
+      </Grid>
+      <Grid item xs={1}
+        sx={{
+          display: 'none'
+        }}
+      >
+        <IconButton onClick={handleEdit}>
+          <EditIcon />
+        </IconButton>
 
-            </Grid>
-        </Grid>
+      </Grid>
+    </Grid>
   )
 }
 
@@ -151,7 +151,7 @@ export const Directives: React.FC<DirectivesProps> = ({ directives, handleEditDi
   useEffect(() => {
     Object.values(directives)
       .forEach((directive) => {
-        if (directive.length > 0) {
+        if (directive !== undefined) {
           setOpen(true)
         }
       })
@@ -160,33 +160,35 @@ export const Directives: React.FC<DirectivesProps> = ({ directives, handleEditDi
   const handleDelete = (dir: string, str: string): void => {
     let sources = directives[dir]
 
-    sources = sources.filter((src) => {
+    sources = sources?.filter((src) => {
       return src !== str
     })
 
     addSourcesToDirective(dir, sources)
   }
 
-  return <React.Fragment>
-        <Container fixed>
-            <Grid container spacing={2}>
-                {
-                    isOpen && Object.keys(directives)
-                      .map((directive) => {
-                        if (directives[directive].length > 0) {
-                          return <Grid key={directive} item xs={12}>
-                                    <DirectiveField
-                                        dir={directive}
-                                        src={directives[directive]}
-                                        handleDelete={handleDelete}
-                                        handleEditDirective={handleEditDirective} />
-                                </Grid>
-                        }
-
-                        return null
-                      })
+  return (
+    <React.Fragment>
+      <Container fixed>
+        <Grid container spacing={2}>
+          {
+            isOpen && Object.keys(directives)
+              .map((directive) => {
+                if (directives[directive] !== undefined) {
+                  return <Grid key={directive} item xs={12}>
+                    <DirectiveField
+                      dir={directive}
+                      src={directives[directive]}
+                      handleDelete={handleDelete}
+                      handleEditDirective={handleEditDirective} />
+                  </Grid>
                 }
-            </Grid>
-        </Container>
+
+                return null
+              })
+          }
+        </Grid>
+      </Container>
     </React.Fragment>
+  )
 }

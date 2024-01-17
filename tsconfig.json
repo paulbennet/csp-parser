@@ -18,7 +18,7 @@
     "resolveJsonModule": true, // Include modules imported with .json extension
     "noEmit": false, // Do not emit output (meaning do not compile code, only perform type checking)
     "jsx": "react", // Support JSX in .tsx files
-    "sourceMap": true, // Generate corrresponding .map file
+    "sourceMap": true, // Generate corresponding .map file
     "declaration": false, // Generate corresponding .d.ts file
     "noUnusedParameters": false, // Report errors on unused parameters
     "incremental": true, // Enable incremental compilation by reading/writing information from prior compilations to a file on disk

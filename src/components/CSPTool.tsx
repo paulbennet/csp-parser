@@ -43,7 +43,7 @@ export const CSPTool: React.FC<CSPToolProps> = (
 
     Object.keys({ ...directives })
       .forEach((directive: string) => {
-        if (directives[directive].length > 0) {
+        if (directives[directive] !== undefined) {
           keys.push(directive)
         }
       })
@@ -98,7 +98,7 @@ export const CSPTool: React.FC<CSPToolProps> = (
       Object.keys(csp)
         .forEach((item) => {
           if (directivesArray.includes(item)) {
-            const sources = Array.from(new Set(dir[item].concat(csp[item])))
+            const sources = Array.from(new Set(dir[item]?.concat(csp[item] ?? [])))
             dir[item] = sources
           }
         })
@@ -111,7 +111,7 @@ export const CSPTool: React.FC<CSPToolProps> = (
 
     if (src.length === 0) {
       policies[dir] = []
-    } else if ((policies[dir] === undefined) || policies[dir].length === 0) {
+    } else if ((policies[dir] === undefined)) {
       policies[dir] = src
     } else {
       const sources = Array.from(new Set(src))
@@ -152,9 +152,9 @@ export const CSPTool: React.FC<CSPToolProps> = (
 
     Object.keys(dirs)
       .forEach((directive) => {
-        if (dirs[directive].length > 0) {
+        if (dirs[directive] !== undefined) {
           const filteredSourceList = dirs[directive]
-            .filter((source) => {
+            ?.filter((source) => {
               return rex.exec(source) === null
             })
           dirs[directive] = filteredSourceList

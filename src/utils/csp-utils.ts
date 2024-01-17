@@ -129,6 +129,7 @@ export const evaluatePolicy = (directive: string, source: string): boolean | str
   } else if (directive === Directive.REPORT_TO) {
     return REPORT_TO_PATTERN.test(source)
   }
+
   return false
 }
 
@@ -140,7 +141,7 @@ export const evaluateSourcesAgainstDirective = (dir: string, sources: string[]):
   return src
 }
 
-type PolicyResult = Record<string, string[]>
+type PolicyResult = Record<string, string[] | undefined>
 
 export const policyParser = (policy: string = ''): PolicyResult => {
   const result: PolicyResult = {}
@@ -170,8 +171,8 @@ export const getPolicyString = (directives: PolicyResult): string => {
 
   Object.keys(directives)
     .forEach((directive) => {
-      if (directives[directive].length > 0) {
-        const policy = `${directive} ${directives[directive].join(' ')}; `
+      if (directives[directive] !== undefined) {
+        const policy = `${directive} ${directives[directive]?.join(' ')}; `
         policyString = policyString.concat(policy)
       }
     })

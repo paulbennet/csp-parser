@@ -4,10 +4,12 @@ import AlertTitle from '@mui/material/AlertTitle'
 import { Container } from '@mui/material'
 
 export const ErrorPage: React.FC = () => {
-  return <Container fixed sx={{ paddingBlockStart: '10%' }}>
-        <Alert severity="error">
-            <AlertTitle>Error</AlertTitle>
-            Page not found! <strong>Or try again with valid key!</strong>
-        </Alert>
-    </Container>
+  return (
+        <Container fixed sx={{ paddingBlockStart: '10%' }}>
+            <Alert severity="error">
+                <AlertTitle>Error</AlertTitle>
+                Page not found! <strong>Or try again with valid key!</strong>
+            </Alert>
+        </Container>
+  )
 }
