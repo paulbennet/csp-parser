@@ -1,45 +1,45 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import Grid from '@mui/material/Grid';
-import Fab from '@mui/material/Fab';
-import TextField from '@mui/material/TextField';
-import AddIcon from '@mui/icons-material/Add';
-import Tooltip from '@mui/material/Tooltip';
-import { ExportPolicy } from "./ExportPolicy";
+import AddIcon from '@mui/icons-material/Add'
+import Fab from '@mui/material/Fab'
+import Grid from '@mui/material/Grid'
+import TextField from '@mui/material/TextField'
+import Tooltip from '@mui/material/Tooltip'
+import React, { useEffect, useState } from 'react'
+import { ExportPolicy } from './ExportPolicy'
+import { type PolicyResult } from '../utils/csp-utils'
 
-type Props = {
-    deleteSourcesWithRegex: Function,
-    handleReplace: Function,
-    handleReset: Function,
-    handleAddDirective: Function,
-    directives: Object,
-};
+interface Props {
+  deleteSourcesWithRegex: (regex) => void
+  handleReplace: (oldSourceName, newSourceName) => void
+  handleReset: () => void
+  handleAddDirective: (string) => void
+  directives: PolicyResult
+}
 
 export const ImportPolicy: React.FC<Props> = ({ deleteSourcesWithRegex, handleReplace, handleReset, handleAddDirective, directives }) => {
+  const [text, setText] = useState('')
 
-    const [text, setText] = useState("");
+  const handleOnAdd = (): void => {
+    handleAddDirective('new')
+  }
 
-    const handleOnAdd = () => {
-        handleAddDirective("new")
-    };
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      handleAddDirective(text)
+      setText('')
+    }, 500)
 
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            handleAddDirective(text);
-            setText("");
-        }, 500)
+    return () => {
+      clearTimeout(timer)
+    }
+  }, [text])
 
-        return () => {
-            clearTimeout(timer);
-        }
-    }, [text]);
+  const handleOnChange = (event: { preventDefault: () => void, target: { value: string } }): void => {
+    setText(String(event.target.value))
+  }
 
-    const handleOnChange = (event: { preventDefault: () => void; target: { value: any; }; }) => {
-        setText(event.target.value);
-    };
-
-    return (
+  return (
         <Grid container spacing={1}>
-            <Grid item xs={1} sx={{ overflowY: "hidden" }}>
+            <Grid item xs={1} sx={{ overflowY: 'hidden' }}>
                 <ExportPolicy deleteSourcesWithRegex={deleteSourcesWithRegex} handleReplace={handleReplace} handleReset={handleReset} directives={directives}/>
             </Grid>
             <Grid item xs={1}>
@@ -61,5 +61,5 @@ export const ImportPolicy: React.FC<Props> = ({ deleteSourcesWithRegex, handleRe
                 />
             </Grid>
         </Grid>
-    );
-};
+  )
+}

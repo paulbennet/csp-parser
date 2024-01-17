@@ -1,78 +1,78 @@
-import React, { useEffect, useState } from 'react';
-import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
-import { Snackbar, TextField } from '@mui/material';
-import { evaluatePolicy } from '../utils/csp-utils';
+import React, { useEffect, useState } from 'react'
+import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete'
+import { Snackbar, TextField } from '@mui/material'
+import { evaluatePolicy } from '../utils/csp-utils'
 
-const filter = createFilterOptions<string>();
+const filter = createFilterOptions<string>()
 
-type AutoCompleteTextFieldProps = {
-    directive: string,
-    suggestions: string[],
-    handleAddSources: Function
+interface AutoCompleteTextFieldProps {
+  directive: string
+  suggestions: string[]
+  handleAddSources: (value) => void
 }
 
 export const AutoCompleteTextField: React.FC<AutoCompleteTextFieldProps> = ({ directive, suggestions, handleAddSources }) => {
-    const [value, setValue] = useState<string | null>("");
-    const [inputValue, setInputValue] = useState("");
-    const [snackbarOpen, setSnackbarOpen] = React.useState<boolean>(false);
-    const [snackbarMessage, setSnackbarMessage] = React.useState<string>("");
+  const [value, setValue] = useState<string>('')
+  const [inputValue, setInputValue] = useState('')
+  const [snackbarOpen, setSnackbarOpen] = React.useState<boolean>(false)
+  const [snackbarMessage, setSnackbarMessage] = React.useState<string>('')
 
-    useEffect(() => {
-        if (value) {
-            if (evaluatePolicy(directive, value)) {
-                handleAddSources(value);
-                setValue("");
-                setInputValue("")
-            } else {
-                setSnackbarMessage(`Invalid source for '${directive}' directive!`)
-                setSnackbarOpen(true);
-            }
-        }
-    }, [value])
+  useEffect(() => {
+    if (value.length > 0) {
+      if (evaluatePolicy(directive, value) === true) {
+        handleAddSources(value)
+        setValue('')
+        setInputValue('')
+      } else {
+        setSnackbarMessage(`Invalid source for '${directive}' directive!`)
+        setSnackbarOpen(true)
+      }
+    }
+  }, [value])
 
-    const onSnackbarClose = () => {
-        setSnackbarOpen(false);
-    };
+  const onSnackbarClose = (): void => {
+    setSnackbarOpen(false)
+  }
 
-    return <>
+  return <>
         <Autocomplete
             size="small"
             freeSolo
             onChange={(_event: any, newValue: string) => {
-                if (newValue?.startsWith("Add")) {
-                    newValue = newValue.replaceAll(/^Add\s"/g, "").slice(0, -1);
-                }
+              if (newValue?.startsWith('Add')) {
+                newValue = newValue.replaceAll(/^Add\s"/g, '').slice(0, -1)
+              }
 
-                setValue(newValue)
+              setValue(newValue)
             }}
             inputValue={inputValue}
             onInputChange={(_event, newInputValue) => {
-                if (newInputValue?.startsWith("Add")) {
-                    newInputValue = newInputValue.replaceAll(/^Add\s"/g, "").slice(0, -1);
-                }
+              if (newInputValue?.startsWith('Add')) {
+                newInputValue = newInputValue.replaceAll(/^Add\s"/g, '').slice(0, -1)
+              }
 
-                setInputValue(newInputValue);
+              setInputValue(newInputValue)
             }}
             options={suggestions}
             filterOptions={(options, params) => {
-                const filtered = filter(options, params);
-                const { inputValue } = params;
-                const isExisting = options.some((option) => inputValue === option);
+              const filtered = filter(options, params)
+              const { inputValue } = params
+              const isExisting = options.some((option) => inputValue === option)
 
-                if (inputValue !== '' && !isExisting) {
-                    filtered.push(`Add "${inputValue}"`);
-                }
+              if (inputValue !== '' && !isExisting) {
+                filtered.push(`Add "${inputValue}"`)
+              }
 
-                return filtered;
+              return filtered
             }}
             renderInput={(params) => <TextField {...params} label="Sources" />}
         />
         <Snackbar
-            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+            anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
             autoHideDuration={1000}
             open={snackbarOpen}
             onClose={onSnackbarClose}
             message={snackbarMessage}
         />
     </>
-};
+}

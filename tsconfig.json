@@ -6,7 +6,7 @@
       "dom.iterable",
       "esnext"
     ], // List of library files to be included in the compilation
-    "allowJs": true, // Allow JavaScript files to be compiled
+    "allowJs": false, // Allow JavaScript files to be compiled
     "skipLibCheck": true, // Skip type checking of all declaration files
     "esModuleInterop": true, // Disables namespace imports (import * as fs from "fs") and enables CJS/AMD/UMD style imports (import fs from "fs")
     "allowSyntheticDefaultImports": true, // Allow default imports from modules with no default export
@@ -22,7 +22,8 @@
     "declaration": false, // Generate corresponding .d.ts file
     "noUnusedParameters": false, // Report errors on unused parameters
     "incremental": true, // Enable incremental compilation by reading/writing information from prior compilations to a file on disk
-    "noFallthroughCasesInSwitch": true // Report errors for fallthrough cases in switch statement
+    "noFallthroughCasesInSwitch": true, // Report errors for fallthrough cases in switch statement,
+    "strictNullChecks": true
   },
   "include": [
     "src/**/*" // *** The files TypeScript should type check ***

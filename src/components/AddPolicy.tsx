@@ -1,68 +1,64 @@
-import React, { useEffect, useState } from "react";
-import Container from '@mui/material/Container';
-import TextField from '@mui/material/TextField';
-import Grid from '@mui/material/Grid';
-import Badge from '@mui/material/Badge';
-import Chip from '@mui/material/Chip';
-import Paper from '@mui/material/Paper';
-import { styled } from '@mui/material/styles';
-import IconButton from '@mui/material/IconButton';
-import EditIcon from '@mui/icons-material/Edit';
-import { sortSources } from "../utils/csp-utils";
+import React, { useEffect, useState } from 'react'
+import Container from '@mui/material/Container'
+import TextField from '@mui/material/TextField'
+import Grid from '@mui/material/Grid'
+import Badge from '@mui/material/Badge'
+import Chip from '@mui/material/Chip'
+import Paper from '@mui/material/Paper'
+import { styled } from '@mui/material/styles'
+import IconButton from '@mui/material/IconButton'
+import EditIcon from '@mui/icons-material/Edit'
+import { type PolicyResult, sortSources } from '../utils/csp-utils'
+import { enqueueSnackbar } from 'notistack'
 
-type DirectivesProps = {
-    directives: Object,
-    handleEditDirective: Function,
-    addSourcesToDirective: Function
-};
-
-type DirectiveFieldProps = {
-    dir: string,
-    src: string[],
-    handleDelete: Function,
-    handleEditDirective: Function
-};
+interface DirectiveFieldProps {
+  dir: string
+  src: string[]
+  handleDelete: (dir, str) => void
+  handleEditDirective: (dir, src) => void
+}
 
 const ListItem = styled('li')(({ theme }) => ({
-    margin: theme.spacing(0.5),
-}));
+  margin: theme.spacing(0.5)
+}))
 
 const DirectiveField: React.FC<DirectiveFieldProps> = ({ dir, src, handleEditDirective, handleDelete }) => {
+  const [schemeSources, setSchemeSources] = useState<string[]>([])
+  const [hostSources, setHostSources] = useState<string[]>([])
 
-    const [schemeSources, setSchemeSources] = useState<string[]>([]);
-    const [hostSources, setHostSources] = useState<string[]>([]);
+  useEffect(() => {
+    const sources = sortSources(src)
+    setSchemeSources(sources.schemeSources)
+    setHostSources(sources.hostSources)
+  }, [src])
 
-    useEffect(() => {
-        const sources = sortSources(src);
-        setSchemeSources(sources.schemeSources);
-        setHostSources(sources.hostSources);
-    }, [src]);
+  const handleEdit = (): void => {
+    handleEditDirective(dir, src)
+  }
 
-    const handleEdit = () => {
-        handleEditDirective(dir, src);
-    };
-
-
-    return (
+  return (
         <Grid container sx={{
-            display: 'flex',
-            justifyContent: 'start',
-            alignItems: "baseline",
-            "&:hover": {
-                ".MuiGrid-grid-xs-1": {
-                    display: "inline-block"
-                }
-            },
+          display: 'flex',
+          justifyContent: 'start',
+          alignItems: 'baseline',
+          '&:hover': {
+            '.MuiGrid-grid-xs-1': {
+              display: 'inline-block'
+            }
+          }
         }}>
             <Grid item xs={3}>
                 <Badge badgeContent={src.length} color="primary">
                     <TextField
                         fullWidth
                         size="small"
-                        id="directive-textarea"
                         label="Directive"
                         InputProps={{
-                            readOnly: true,
+                          readOnly: true
+                        }}
+                        onClick={() => {
+                          void navigator.clipboard.writeText(dir)
+                          enqueueSnackbar('📋 Directive name copied')
                         }}
                         value={dir}
                     />
@@ -71,64 +67,67 @@ const DirectiveField: React.FC<DirectiveFieldProps> = ({ dir, src, handleEditDir
             <Grid item xs={8}>
                 <Paper
                     sx={{
-                        display: 'flex',
-                        justifyContent: 'start',
-                        flexWrap: 'wrap',
-                        listStyle: 'none',
-                        p: 0.5,
-                        m: 0,
+                      display: 'flex',
+                      justifyContent: 'start',
+                      flexWrap: 'wrap',
+                      listStyle: 'none',
+                      p: 0.5,
+                      m: 0
                     }}
                     component="ul"
                 >
                     {
-                        schemeSources.length > 0 && 
+                        schemeSources.length > 0 &&
                         schemeSources.map((data) => {
-
-                            return (
+                          return (
                                 <ListItem key={data}>
                                     <Chip
                                         sx={{
-                                            backgroundColor: "#F1F8E9",
-                                            // backgroundColor: "#d2e3fc",
-                                            color: "#000"
+                                          backgroundColor: '#F1F8E9',
+                                          // backgroundColor: "#d2e3fc",
+                                          color: '#000'
                                         }}
                                         onDelete={() => {
-                                            handleDelete(dir, data);
+                                          handleDelete(dir, data)
                                         }}
                                         onClick={() => {
-                                            navigator.clipboard.writeText(data)
+                                          void navigator.clipboard.writeText(data)
+                                          enqueueSnackbar('📋 Value copied')
                                         }}
                                         label={data}
                                     />
                                 </ListItem>
-                            );
+                          )
                         })
                     }
                     {
-                        hostSources.length > 0 && 
+                        hostSources.length > 0 &&
                         hostSources.map((data) => {
-
-                            return (
+                          return (
                                 <ListItem key={data}>
                                     <Chip
                                         sx={{
-                                            backgroundColor: "#E1F5FE",
-                                            color: "#000"
+                                          backgroundColor: '#E1F5FE',
+                                          color: '#000'
                                         }}
                                         onDelete={() => {
-                                            handleDelete(dir, data);
+                                          handleDelete(dir, data)
+                                        }}
+                                        onClick={() => {
+                                          void navigator.clipboard.writeText(data)
+                                          enqueueSnackbar('📋 Value copied')
                                         }}
                                         label={data}
                                     />
                                 </ListItem>
-                            );
+                          )
                         })
                     }
                 </Paper>
             </Grid>
             <Grid item xs={1}
                 sx={{
-                    display: "none"
+                  display: 'none'
                 }}
             >
                 <IconButton onClick={handleEdit}>
@@ -137,53 +136,57 @@ const DirectiveField: React.FC<DirectiveFieldProps> = ({ dir, src, handleEditDir
 
             </Grid>
         </Grid>
-    )
-};
+  )
+}
 
+interface DirectivesProps {
+  directives: PolicyResult
+  handleEditDirective: (dir, src) => void
+  addSourcesToDirective: (dir, sources) => void
+}
 
 export const Directives: React.FC<DirectivesProps> = ({ directives, handleEditDirective, addSourcesToDirective }) => {
+  const [isOpen, setOpen] = useState(false)
 
-    const [isOpen, setOpen] = useState(false);
+  useEffect(() => {
+    Object.values(directives)
+      .forEach((directive) => {
+        if (directive.length > 0) {
+          setOpen(true)
+        }
+      })
+  }, [directives])
 
-    useEffect(() => {
-        Object.values(directives)
-            .forEach((directive) => {
-                if (directive.length > 0) {
-                    setOpen(true);
-                }
-            })
-    }, [directives]);
+  const handleDelete = (dir: string, str: string): void => {
+    let sources = directives[dir]
 
-    const handleDelete = (dir: string, str: string) => {
+    sources = sources.filter((src) => {
+      return src !== str
+    })
 
-        let sources = directives[dir];
+    addSourcesToDirective(dir, sources)
+  }
 
-        sources = sources.filter((src) => {
-            return src !== str;
-        });
-
-        addSourcesToDirective(dir, sources);
-    };
-
-    return <React.Fragment>
+  return <React.Fragment>
         <Container fixed>
             <Grid container spacing={2}>
                 {
                     isOpen && Object.keys(directives)
-                        .map((directive) => {
-                            if (directives[directive].length > 0) {
-                                return <Grid key={directive} item xs={12}>
+                      .map((directive) => {
+                        if (directives[directive].length > 0) {
+                          return <Grid key={directive} item xs={12}>
                                     <DirectiveField
                                         dir={directive}
                                         src={directives[directive]}
                                         handleDelete={handleDelete}
                                         handleEditDirective={handleEditDirective} />
                                 </Grid>
-                            }
-                        })
+                        }
+
+                        return null
+                      })
                 }
             </Grid>
         </Container>
     </React.Fragment>
-
-};
+}

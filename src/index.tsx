@@ -1,55 +1,68 @@
-import React, { useEffect, useState } from "react";
-import ReactDOM from "react-dom/client";
-import { CSPTool } from "./components/CSPTool";
-import Header from "./components/Header";
-import { policyParser } from "./utils/csp-utils";
-import { ErrorPage } from "./components/ErrorPage";
+import React, { useEffect, useState } from 'react'
+import ReactDOM from 'react-dom/client'
+import { CSPTool } from './components/CSPTool'
+import Header from './components/Header'
+import { type PolicyResult, policyParser } from './utils/csp-utils'
+import { ErrorPage } from './components/ErrorPage'
+import { SnackbarProvider } from 'notistack'
 
 const App: React.FC = () => {
+  const [valid, setValid] = useState<boolean>(false)
+  const [directives, setDirectives] = useState<PolicyResult>({})
 
-    const [valid, setValid] = useState<boolean>(false);
-    const [directives, setDirectives] = useState({});
+  useEffect(() => {
+    if (window?.location?.search?.length > 0) {
+      const searchParams = new URLSearchParams(location.search.substring(location.search.indexOf('?')))
 
-    useEffect(() => {
-        if (window.location.search) {
-            const searchParams = new URLSearchParams(location.search.substring(location.search.indexOf('?')));
-            let key = searchParams.get("config");
-            console.log(key);
+      let config = searchParams.get('config')
 
-            if (key === "") {
-                setValid(true);
-                return;
-            }
-            
-            if (!key) {
-                setValid(false);
-                return;
-            }
-            try {
-                key = window.atob(key);
-                setDirectives(policyParser(key));
-                setValid(true)
-            } catch (e) {
-                console.error(e);
-                
-                setValid(false);
-            }
+      console.log(config)
 
-            return;
-        }
-        setValid(true);
-    }, []);
+      if (!searchParams.has('config')) {
+        setValid(false)
+        return
+      }
 
-    return <div className="app">
+      if (config?.length === 0) {
+        setValid(true)
+        return
+      }
+
+      try {
+        config = window.atob(config ?? '')
+        setDirectives(policyParser(config))
+        setValid(true)
+      } catch (e) {
+        console.error(e)
+
+        setValid(false)
+      }
+
+      return
+    }
+    setValid(true)
+  }, [])
+
+  return (
+    <div className="app">
+        <SnackbarProvider />
         {
-            valid ? <>
-                <Header />
-                <CSPTool directives={directives}/>
-            </> : <ErrorPage />
+            valid
+              ? (
+                <>
+                  <Header />
+                  <CSPTool directives={directives} />
+                </>
+                )
+              : <ErrorPage />
 
         }
     </div>
-};
+  )
+}
 
-const root: HTMLElement = document.getElementById("root")!;
-ReactDOM.createRoot(root).render(<App />)
+const root = document.getElementById('root')
+
+if (root !== null) {
+  ReactDOM.createRoot(root).render(<App />)
+}
